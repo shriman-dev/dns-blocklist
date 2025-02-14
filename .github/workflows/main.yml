@@ -2,8 +2,6 @@ name: build dns blocklists
 on:
   schedule:
     - cron: '05 10 * * *'  # 10:05am UTC everyday
-    paths-ignore:
-      - '**/README.md'
 
   workflow_dispatch:
     branches:
