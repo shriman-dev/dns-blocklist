@@ -4,7 +4,12 @@ on:
     - cron: '05 10 * * *'  # 10:05am UTC everyday
     paths-ignore:
       - '**/README.md'
+
   workflow_dispatch:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/main.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
