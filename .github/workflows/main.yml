@@ -68,10 +68,10 @@ jobs:
           git config --local user.name actions-user
           git config --local user.email "actions@github.com"
           git fetch
-          git add *
+          git add -A
           git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
           git remote set-url origin https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git push -u origin main
+          git push
 
 
 
