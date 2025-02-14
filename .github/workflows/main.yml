@@ -10,7 +10,7 @@ on:
       - '.github/workflows/main.yml'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
 
 concurrency:
@@ -21,10 +21,6 @@ jobs:
   build_push:
     name: Build Block Lists
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
 
     steps:
       - name: Checkout Repo
