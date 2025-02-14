@@ -38,31 +38,52 @@ jobs:
           ls -A1
           curl -lo /tmp/hblock https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock
           chmod -x /tmp/hblock
-          # make dnsmasq blocklist.conf
-          mkdir -p dnsmasq.d/
+          mkdir -p /tmp/buildlists
+          
+          echo ""
+          echo "make dnsmasq blocklist.conf"
+          echo ""
+          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
           -D ${{ github.workspace }}/hblock/deny.list \
           -T "local=/%D/%R" \
           -H none -F none \
-          -O dnsmasq.d/blocklist.conf
-          # make hostfile
-          mkdir -p hosts.d/
+          -O /tmp/buildlists/blocklist.conf
+          mkdir -p dnsmasq.d/
+          split -db 80M /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
+          for F in dnsmasq.d/blocklist.conf*; do
+              mv -v "$F" "${F%\.*}$(basename "$F" | grep -o '[0-9]*$').conf"
+          done
+          
+          echo ""
+          echo "make hostfile"
+          echo ""
+          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
           -D ${{ github.workspace }}/hblock/deny.list \
-          -O hosts.d/hosts
-          # make domain only file
+          -O /tmp/buildlists/hosts
+          mkdir -p hosts.d/
+          split -db 80M /tmp/buildlists/hosts hosts.d/hosts
+          
+          echo ""
+          echo "make domain only file"
+          echo ""
+          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
           -D ${{ github.workspace }}/hblock/deny.list \
           -T "%D" \
           -H none -F none \
-          -O domain-only.txt
-          ls -A1
+          -O /tmp/buildlists/domains
+          mkdir -p domains.d/
+          split -db 80M /tmp/buildlists/domains domains.d/domains
+          
+          tree
 
       - name: Push block list to repo
         id: push-to-repo
