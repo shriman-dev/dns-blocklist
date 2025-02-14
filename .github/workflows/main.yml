@@ -10,8 +10,8 @@ on:
       - '.github/workflows/main.yml'
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pages: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
