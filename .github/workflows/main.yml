@@ -35,12 +35,9 @@ jobs:
           chmod -x /tmp/hblock
           mkdir -p /tmp/buildlists
 
-          SIZE_LIMIT=40M
+          SIZE_LIMIT=45M
           
-          echo ""
           echo "make dnsmasq blocklist.conf"
-          echo ""
-          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
@@ -49,27 +46,21 @@ jobs:
           -H none -F none \
           -O /tmp/buildlists/blocklist.conf
           mkdir -p dnsmasq.d/
-          split -db $SIZE_LIMIT /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
+          split -dC $SIZE_LIMIT /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
           for F in dnsmasq.d/blocklist.conf*; do
               mv -v "$F" "${F%\.*}$(basename "$F" | grep -o '[0-9]*$').conf"
           done
           
-          echo ""
           echo "make hostfile"
-          echo ""
-          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
           -D ${{ github.workspace }}/hblock/deny.list \
           -O /tmp/buildlists/hosts
           mkdir -p hosts.d/
-          split -db $SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
+          split -dC $SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
           
-          echo ""
           echo "make domain only file"
-          echo ""
-          
           bash /tmp/hblock \
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
@@ -78,7 +69,7 @@ jobs:
           -H none -F none \
           -O /tmp/buildlists/domains
           mkdir -p domains.d/
-          split -db $SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
+          split -dC $SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
           
           tree
 
