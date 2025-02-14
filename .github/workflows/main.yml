@@ -2,9 +2,6 @@ name: build images
 on:
   schedule:
     - cron: '05 10 * * *'  # 10:05am UTC everyday
-  push:
-    branches:
-      - main
     paths-ignore:
       - '**/README.md'
   workflow_dispatch:
@@ -70,13 +67,8 @@ jobs:
           git fetch
           git add *
           git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git commit -m "Update coverage badge"
           git remote set-url origin https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git push origin main
+          git push -u origin main
 
 
 
