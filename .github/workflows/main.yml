@@ -1,0 +1,93 @@
+name: build images
+on:
+  schedule:
+    - cron: '05 10 * * *'  # 10:05am UTC everyday
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_push:
+    name: Build Block Lists
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Get hBlock And Build Blocklists
+        id: get-hblock
+        shell: bash
+        run: |
+          set -eou pipefail
+          pwd
+          ls -A1
+          curl -lo /tmp/hblock https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock
+          chmod -x /tmp/hblock
+          # make dnsmasq blocklist.conf
+          mkdir -p dnsmasq.d/
+          bash /tmp/hblock \
+          -S ${{ github.workspace }}/hblock/sources.list \
+          -A ${{ github.workspace }}/hblock/allow.list \
+          -D ${{ github.workspace }}/hblock/deny.list \
+          -T "local=/%D/%R" \
+          -H none -F none \
+          -O dnsmasq.d/blocklist.conf
+          # make hostfile
+          mkdir -p hosts.d/
+          bash /tmp/hblock \
+          -S ${{ github.workspace }}/hblock/sources.list \
+          -A ${{ github.workspace }}/hblock/allow.list \
+          -D ${{ github.workspace }}/hblock/deny.list \
+          -O hosts.d/hosts
+          # make domain only file
+          bash /tmp/hblock \
+          -S ${{ github.workspace }}/hblock/sources.list \
+          -A ${{ github.workspace }}/hblock/allow.list \
+          -D ${{ github.workspace }}/hblock/deny.list \
+          -T "%D" \
+          -H none -F none \
+          -O domain-only.txt
+          ls -A1
+
+      - name: Push block list to repo
+        id: push-to-repo
+        shell: bash
+        run: |
+          git config --local user.name actions-user
+          git config --local user.email "actions@github.com"
+          git fetch
+          git add *
+          git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update coverage badge"
+          git remote set-url origin https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push origin main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
