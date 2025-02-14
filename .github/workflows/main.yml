@@ -1,4 +1,4 @@
-name: build images
+name: build dns blocklists
 on:
   schedule:
     - cron: '05 10 * * *'  # 10:05am UTC everyday
@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get hBlock And Build Blocklists
-        id: get-hblock
+        id: get-hblock-and-build
         shell: bash
         run: |
           set -eou pipefail
