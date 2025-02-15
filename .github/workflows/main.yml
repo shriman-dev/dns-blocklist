@@ -45,6 +45,7 @@ jobs:
           -T "local=/%D/%R" \
           -H none -F none \
           -O /tmp/buildlists/blocklist.conf
+          rm -rf dnsmasq.d/
           mkdir -p dnsmasq.d/
           split -dC $SIZE_LIMIT /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
           for F in dnsmasq.d/blocklist.conf*; do
@@ -58,6 +59,7 @@ jobs:
           -D ${{ github.workspace }}/hblock/deny.list \
           -H none -F none \
           -O /tmp/buildlists/hosts
+          rm -rf hosts.d/
           mkdir -p hosts.d/
           split -dC $SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
           
@@ -69,6 +71,7 @@ jobs:
           -T "%D" \
           -H none -F none \
           -O /tmp/buildlists/domains
+          rm -rf domains.d/
           mkdir -p domains.d/
           split -dC $SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
           
