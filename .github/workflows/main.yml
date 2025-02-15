@@ -35,7 +35,7 @@ jobs:
           chmod -x /tmp/hblock
           mkdir -p /tmp/buildlists
 
-          SIZE_LIMIT=45M
+          SIZE_LIMIT=20M
           
           echo "make dnsmasq blocklist.conf"
           bash /tmp/hblock \
