@@ -42,7 +42,7 @@ jobs:
           -S ${{ github.workspace }}/hblock/sources.list \
           -A ${{ github.workspace }}/hblock/allow.list \
           -D ${{ github.workspace }}/hblock/deny.list \
-          -T "local=/%D/%R" \
+          -T "local=/%D/" \
           -H none -F none \
           -O /tmp/buildlists/blocklist.conf
           rm -rf dnsmasq.d/
