@@ -83,7 +83,7 @@ jobs:
         run: |
           git config --local user.name actions-user
           git config --local user.email "actions@github.com"
-          #git diff .
+          git diff .
           git fetch
           git add -A
           git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
