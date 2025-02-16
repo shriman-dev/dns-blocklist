@@ -31,27 +31,36 @@ jobs:
           set -eou pipefail
           pwd
           ls -A1
-          curl -lo /tmp/hblock https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock
+          curl -Lo /tmp/hblock https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock
           chmod -x /tmp/hblock
-          mkdir -p /tmp/buildlists
+          mkdir -p /tmp/buildlists/tmp
+          bash /tmp/hblock \
+                    -S ${{ github.workspace }}/hblock/allowlist.sources \
+                    -A none -D none -H none -F none -T "%D" \
+                    -O /tmp/buildlists/tmp/allowlist.tmp
+          sed -i '/^#/d;/^$/d' /tmp/buildlists/tmp/allowlist.tmp
+          sort -u /tmp/buildlists/tmp/allowlist.tmp ${{ github.workspace }}/hblock/allow.list > /tmp/buildlists/tmp/allow.list
+          mv /tmp/buildlists/tmp/allow.list ${{ github.workspace }}/hblock/allow.list
 
-          SIZE_LIMIT=20M
+          FILE_SIZE_LIMIT=20M
+          COMPRESSION_LEVEL=15
           
           echo "make dnsmasq blocklist.conf"
           bash /tmp/hblock \
-          -S ${{ github.workspace }}/hblock/sources.list \
-          -A ${{ github.workspace }}/hblock/allow.list \
-          -D ${{ github.workspace }}/hblock/deny.list \
-          -T "local=/%D/" \
-          -H none -F none \
-          -O /tmp/buildlists/blocklist.conf
+                    -S ${{ github.workspace }}/hblock/sources.list \
+                    -A ${{ github.workspace }}/hblock/allow.list \
+                    -D ${{ github.workspace }}/hblock/deny.list \
+                    -T "local=/%D/" \
+                    -H none -F none \
+                    -O /tmp/buildlists/blocklist.conf
           rm -rf dnsmasq.d*
           mkdir -p dnsmasq.d/
-          split -dC $SIZE_LIMIT /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
+          split -dC $FILE_SIZE_LIMIT /tmp/buildlists/blocklist.conf dnsmasq.d/blocklist.conf
           for F in dnsmasq.d/blocklist.conf*; do
               mv -v "$F" "${F%\.*}$(basename "$F" | grep -o '[0-9]*$').conf"
           done
-          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf dnsmasq.d.tar.zst dnsmasq.d/
+          tar --use-compress-program "zstd --ultra -${COMPRESSION_LEVEL} -T0" \
+              -C ${{ github.workspace }}/ -cf dnsmasq.d.tar.zst dnsmasq.d/
           
           echo "make hostfile"
           bash /tmp/hblock \
@@ -62,8 +71,9 @@ jobs:
           -O /tmp/buildlists/hosts
           rm -rf hosts.d*
           mkdir -p hosts.d/
-          split -dC $SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
-          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf hosts.d.tar.zst hosts.d/
+          split -dC $FILE_SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
+          tar --use-compress-program "zstd --ultra -${COMPRESSION_LEVEL} -T0" \
+              -C ${{ github.workspace }}/ -cf hosts.d.tar.zst hosts.d/
           
           echo "make domain only file"
           bash /tmp/hblock \
@@ -75,8 +85,9 @@ jobs:
           -O /tmp/buildlists/domains
           rm -rf domains.d*
           mkdir -p domains.d/
-          split -dC $SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
-          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf domains.d.tar.zst domains.d/
+          split -dC $FILE_SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
+          tar --use-compress-program "zstd --ultra -${COMPRESSION_LEVEL} -T0" \
+              -C ${{ github.workspace }}/ -cf domains.d.tar.zst domains.d/
           
           tree
 
