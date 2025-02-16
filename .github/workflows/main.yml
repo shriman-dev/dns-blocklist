@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Get hBlock And Build Blocklists
-        id: get-hblock-and-build
+        id: get-hblock-and-build-blocklists
         shell: bash
         run: |
           set -eou pipefail
