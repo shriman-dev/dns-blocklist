@@ -51,7 +51,7 @@ jobs:
           for F in dnsmasq.d/blocklist.conf*; do
               mv -v "$F" "${F%\.*}$(basename "$F" | grep -o '[0-9]*$').conf"
           done
-          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf blocklist.d.tar.zst blocklist.d/
+          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf dnsmasq.d.tar.zst dnsmasq.d/
           
           echo "make hostfile"
           bash /tmp/hblock \
