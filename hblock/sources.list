@@ -10,14 +10,34 @@ https://raw.githubusercontent.com/cenk/bad-hosts/refs/heads/main/bad-hosts-domai
 https://hosts.flossboxin.org.in/files/hosts
 https://dl.red.flag.domains/red.flag.domains.txt
 https://hole.cert.pl/domains/domains.txt
+https://phish.co.za/latest/ALL-phishing-domains.lst
 https://phishing.army/download/phishing_army_blocklist_extended.txt
 https://raw.githubusercontent.com/dmachard/blocklist-domains/data/blocklist.txt
 https://raw.githubusercontent.com/jarelllama/Scam-Blocklist/main/lists/wildcard_domains/scams.txt
+https://raw.githubusercontent.com/FiltersHeroes/KADhosts/refs/heads/master/KADhosts.txt
+
+https://raw.githubusercontent.com/romainmarcoux/malicious-domains/refs/heads/main/full-domains-aa.txt
+https://raw.githubusercontent.com/romainmarcoux/malicious-domains/refs/heads/main/full-domains-ab.txt
+
+https://raw.githubusercontent.com/infinitytec/blocklists/refs/heads/master/ads-and-trackers.txt
+https://raw.githubusercontent.com/infinitytec/blocklists/refs/heads/master/scams-and-phishing.txt
+https://raw.githubusercontent.com/infinitytec/blocklists/refs/heads/master/clickbait.txt
+https://raw.githubusercontent.com/infinitytec/blocklists/refs/heads/master/mlm.txt
+
+https://raw.githubusercontent.com/mullvad/dns-blocklists/refs/heads/main/output/doh/doh_adblock.txt
+https://raw.githubusercontent.com/mullvad/dns-blocklists/refs/heads/main/output/doh/doh_privacy.txt
+https://raw.githubusercontent.com/mullvad/dns-blocklists/refs/heads/main/output/doh/doh_gambling.txt
+
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/firebogsusad.txt
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/firebogtrackmal.txt
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/firebogbluesustrackmal.txt
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/fireboggreensusmal.txt
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/fireboggreenadtrack.txt
+
+https://raw.githubusercontent.com/bongochong/CombinedPrivacyBlockLists/master/newhosts-final.hosts
+https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/refs/heads/master/anti-ad-domains.txt
+https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt
+https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/refs/heads/main/Google_hostnames.txt
 
 #https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/doh-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/fake-onlydomains.txt
@@ -39,13 +59,9 @@ https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/tif-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/ultimate-onlydomains.txt
 
-https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/refs/heads/main/Google_hostnames.txt
 https://raw.githubusercontent.com/sjhgvr/oisd/refs/heads/main/domainswild2_big.txt
-https://raw.githubusercontent.com/bongochong/CombinedPrivacyBlockLists/master/newhosts-final.hosts
 https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/domains.wildcards
 https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/refs/heads/master/anti-ad-domains.txt
-https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt
 https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareDomains.txt
 
 https://raw.githubusercontent.com/RPiList/specials/refs/heads/master/DNSMASQ/easylist
