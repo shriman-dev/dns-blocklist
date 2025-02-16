@@ -43,7 +43,7 @@ jobs:
           mv /tmp/buildlists/tmp/allow.list ${{ github.workspace }}/hblock/allow.list
 
           FILE_SIZE_LIMIT=20M
-          COMPRESSION_LEVEL=15
+          COMPRESSION_LEVEL=22
           
           echo "make dnsmasq blocklist.conf"
           bash /tmp/hblock \
