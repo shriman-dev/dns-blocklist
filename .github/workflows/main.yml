@@ -64,11 +64,11 @@ jobs:
           
           echo "make hostfile"
           bash /tmp/hblock \
-          -S ${{ github.workspace }}/hblock/sources.list \
-          -A ${{ github.workspace }}/hblock/allow.list \
-          -D ${{ github.workspace }}/hblock/deny.list \
-          -H none -F none \
-          -O /tmp/buildlists/hosts
+                    -S ${{ github.workspace }}/hblock/sources.list \
+                    -A ${{ github.workspace }}/hblock/allow.list \
+                    -D ${{ github.workspace }}/hblock/deny.list \
+                    -H none -F none \
+                    -O /tmp/buildlists/hosts
           rm -rf hosts.d*
           mkdir -p hosts.d/
           split -dC $FILE_SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
@@ -77,12 +77,12 @@ jobs:
           
           echo "make domain only file"
           bash /tmp/hblock \
-          -S ${{ github.workspace }}/hblock/sources.list \
-          -A ${{ github.workspace }}/hblock/allow.list \
-          -D ${{ github.workspace }}/hblock/deny.list \
-          -T "%D" \
-          -H none -F none \
-          -O /tmp/buildlists/domains
+                    -S ${{ github.workspace }}/hblock/sources.list \
+                    -A ${{ github.workspace }}/hblock/allow.list \
+                    -D ${{ github.workspace }}/hblock/deny.list \
+                    -T "%D" \
+                    -H none -F none \
+                    -O /tmp/buildlists/domains
           rm -rf domains.d*
           mkdir -p domains.d/
           split -dC $FILE_SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
