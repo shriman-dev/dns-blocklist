@@ -1,0 +1,4 @@
+https://local.oisd.nl/extract/commonly_whitelisted.php
+https://raw.githubusercontent.com/AdguardTeam/HttpsExclusions/refs/heads/master/exclusions/sensitive.txt
+https://raw.githubusercontent.com/AdguardTeam/HttpsExclusions/refs/heads/master/exclusions/issues.txt
+https://raw.githubusercontent.com/AdguardTeam/HttpsExclusions/refs/heads/master/exclusions/firefox.txt
