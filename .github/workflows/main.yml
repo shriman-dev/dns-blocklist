@@ -51,6 +51,7 @@ jobs:
           for F in dnsmasq.d/blocklist.conf*; do
               mv -v "$F" "${F%\.*}$(basename "$F" | grep -o '[0-9]*$').conf"
           done
+          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf blocklist.d.tar.zst blocklist.d/
           
           echo "make hostfile"
           bash /tmp/hblock \
@@ -62,6 +63,7 @@ jobs:
           rm -rf hosts.d/
           mkdir -p hosts.d/
           split -dC $SIZE_LIMIT /tmp/buildlists/hosts hosts.d/hosts
+          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf hosts.d.tar.zst hosts.d/
           
           echo "make domain only file"
           bash /tmp/hblock \
@@ -74,6 +76,7 @@ jobs:
           rm -rf domains.d/
           mkdir -p domains.d/
           split -dC $SIZE_LIMIT /tmp/buildlists/domains domains.d/domains
+          tar --use-compress-program "zstd --ultra -22 -T0" -C ${{ github.workspace }}/ -cf domains.d.tar.zst domains.d/
           
           tree
 
