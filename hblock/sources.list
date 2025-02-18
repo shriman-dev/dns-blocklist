@@ -3,15 +3,15 @@ https://hblock.molinero.dev/hosts_domains.txt
 #https://raw.githubusercontent.com/cbuijs/accomplist/master/malicious-dom/plain.black.domain.list
 #https://raw.githubusercontent.com/Pyenb/Pi-hole-blocklist/refs/heads/main/blocklist.txt
 #https://raw.githubusercontent.com/mtxadmin/ublock/refs/heads/master/hosts.txt
+#https://raw.githubusercontent.com/cenk/malware-domains/refs/heads/main/domains
+#https://raw.githubusercontent.com/cenk/bad-hosts/refs/heads/main/bad-hosts-domains
 https://raw.githubusercontent.com/stamparm/aux/refs/heads/master/maltrail-malware-domains.txt
-https://raw.githubusercontent.com/cenk/malware-domains/refs/heads/main/domains
-https://raw.githubusercontent.com/cenk/bad-hosts/refs/heads/main/bad-hosts-domains
 https://raw.githubusercontent.com/dmachard/blocklist-domains/data/blocklist.txt
 
+#https://phish.co.za/latest/ALL-phishing-domains.lst
 https://hosts.flossboxin.org.in/files/hosts
 https://dl.red.flag.domains/red.flag.domains.txt
 https://hole.cert.pl/domains/domains.txt
-https://phish.co.za/latest/ALL-phishing-domains.lst
 https://phishing.army/download/phishing_army_blocklist_extended.txt
 https://raw.githubusercontent.com/jarelllama/Scam-Blocklist/main/lists/wildcard_domains/scams.txt
 https://raw.githubusercontent.com/FiltersHeroes/KADhosts/refs/heads/master/KADhosts.txt
@@ -34,6 +34,20 @@ https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/fireboggreensusmal.txt
 https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/domlists/fireboggreenadtrack.txt
 
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Ads
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Bloat
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Dynamic
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Gambling
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Junk
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Malware
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Microsoft
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Risk
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Scam
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Tracking
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Wild_Ads
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/RAW/Wild_Tracking
+https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/refs/heads/master/Lists/Typo
+
 https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/refs/heads/main/Google_hostnames.txt
 https://raw.githubusercontent.com/bongochong/CombinedPrivacyBlockLists/master/newhosts-final.hosts
 https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/refs/heads/master/anti-ad-domains.txt
@@ -54,6 +68,7 @@ https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/EasyPrivacySpecific.
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/fake-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/d2utmpwhwFAl
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/dyndns-onlydomains.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/gambling-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/hoster-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/native.amazon-onlydomains.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/refs/heads/main/wildcard/native.apple-onlydomains.txt
