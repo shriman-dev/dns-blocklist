@@ -1,0 +1,140 @@
+name: build dns blocklists
+on:
+  schedule:
+    - cron: '0 */8 * * *'  # 10:05am UTC everyday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_push:
+    name: Build Block Lists
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Get hBlock
+        id: get-hblock
+        shell: bash
+        run: |
+          set -eou pipefail
+          pwd
+          ls -A1
+          curl -Lo /tmp/hblock https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock
+          chmod -x /tmp/hblock
+
+      - name: Build allowlist
+        id: build-allowlist
+        shell: bash
+        run: |
+          set -eou pipefail
+          mkdir -pv /tmp/buildlists/tmp
+          bash /tmp/hblock \
+                    -S ${{ github.workspace }}/hblock/allowlist.sources \
+                    -A none -D none -H none -F none -T "%D" \
+                    -O /tmp/buildlists/tmp/allowlist.tmp
+          sed -i '/^#/d;/^$/d' /tmp/buildlists/tmp/allowlist.tmp
+          sort -u /tmp/buildlists/tmp/allowlist.tmp ${{ github.workspace }}/hblock/allow.list > /tmp/buildlists/tmp/allow.list
+          mv /tmp/buildlists/tmp/allow.list ${{ github.workspace }}/hblock/allow.list
+
+      - name: Inspect Blocklists Sources
+        id: inspect-sources
+        shell: bash
+        run: |
+          mkdir -pv ${{ github.workspace }}/inspect/
+          > ${{ github.workspace }}/inspect/each-blocklist-count
+          for link in $(cat ${{ github.workspace }}/hblock/sources.list); do
+            [[ $link != \#* ]] && { 
+            echo "$link" | tee -a ${{ github.workspace }}/inspect/each-blocklist-count
+            curl -s $link | wc -l | tee -a ${{ github.workspace }}/inspect/each-blocklist-count
+            echo '' | tee -a ${{ github.workspace }}/inspect/each-blocklist-count
+            }
+          done
+      
+      - name: Build Blocklists
+        id: build-blocklists
+        shell: bash
+        run: |
+          set -eou pipefail
+          WORKSPACE=${{ github.workspace }}
+          TMP_DIR=/tmp/buildlists
+          FILE_SIZE_LIMIT=45M
+          COMPRESSION_LEVEL=19
+
+          mkdir -pv "$TMP_DIR"
+          hblock() {
+            bash /tmp/hblock \
+              -S "$WORKSPACE/hblock/sources.list" \
+              -A "$WORKSPACE/hblock/allow.list" \
+              -D "$WORKSPACE/hblock/deny.list" \
+              -H none -F none \
+              "$@"
+          }
+
+          build_process() {
+            local output_dir=$1
+            local output_file=$2
+            local args=("$@")
+            args=("${args[@]:2}")
+            mkdir -pv "$output_dir"
+            hblock "${args[@]}" -O "$TMP_DIR/$output_file"
+            split -dC "$FILE_SIZE_LIMIT" "$TMP_DIR/$output_file" "$output_dir/$output_file"
+            tar --use-compress-program "zstd --ultra -${COMPRESSION_LEVEL} -T$(nproc)" \
+              -C "$TMP_DIR" -cf "$output_dir/$output_file.tar.zst" "$output_file"
+          }
+
+          echo "make dnsmasq blocklist.conf"
+          rm -rf "$WORKSPACE/dnsmasq.d"
+          build_process "$WORKSPACE/dnsmasq.d" "blocklist.conf" -T "local=/%D/" --filter-subdomains
+
+          echo "make hostfile"
+          rm -rf "$WORKSPACE/hosts.d"
+          build_process "$WORKSPACE/hosts.d" "hosts"
+
+          echo "make domains only file"
+          rm -rf "$WORKSPACE/domains.d"
+          build_process "$WORKSPACE/domains.d" "domains" -T "%D"
+
+          echo "make domains file with filtered subdomains"
+          build_process "$WORKSPACE/domains.d" "domains-filtered-subdomains" -T "%D" --filter-subdomains
+
+          tree
+
+      - name: Push block list to repo
+        id: push-to-repo
+        shell: bash
+        run: |
+          git config --local user.name actions-user
+          git config --local user.email "actions@github.com"
+          git fetch
+          git checkout --orphan latest_branch
+          git add -A
+          git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
+          git branch -D main
+          git branch -m main
+          git push -f origin main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
