@@ -1,0 +1,141 @@
+name: build dns blocklists
+on:
+  schedule:
+    - cron: '0 */8 * * *'  # 10:05am UTC everyday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_push:
+    name: Build Block Lists
+    runs-on: ubuntu-latest
+    env:
+      HBLOCK: /tmp/hblock
+      TMP_DIR: /tmp/buildlists
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Get hBlock
+        id: get-hblock
+        shell: bash
+        run: |
+          set -eou pipefail
+          pwd
+          ls -A1
+          mkdir -p "${TMP_DIR}"
+          curl -fLsS --retry 5 -o "${HBLOCK}" \
+               "https://raw.githubusercontent.com/hectorm/hblock/refs/heads/master/hblock"
+          chmod -x "${HBLOCK}"
+
+      - name: Build allowlist
+        id: build-allowlist
+        shell: bash
+        run: |
+          set -eou pipefail
+          ALLOWLIST_TMP="$(mktemp)"
+          # Build allow list
+          bash "${HBLOCK}" \
+                    -S "${GITHUB_WORKSPACE}/hblock/allowlist.sources" \
+                    -A none -D none -H none -F none -T "%D" \
+                    -O "${ALLOWLIST_TMP}"
+          # Remove comments and blank lines
+          sed -i '/^#/d;/^$/d' "${ALLOWLIST_TMP}"
+          # Remove duplicate entries and sort the result
+          sort -u "${ALLOWLIST_TMP}" \
+                  "${GITHUB_WORKSPACE}/hblock/allow.list" > "${TMP_DIR}/allow.list"
+          mv "${TMP_DIR}/allow.list" "${GITHUB_WORKSPACE}/hblock/allow.list"
+
+      - name: Inspect Blocklists Sources
+        id: inspect-sources
+        shell: bash
+        run: |
+          set -eou pipefail
+          mkdir -p "${GITHUB_WORKSPACE}/inspect"
+          COUNT_FILE="${GITHUB_WORKSPACE}/inspect/each-blocklist-count"
+          mapfile -t SOURCES_LIST_MAP < "${GITHUB_WORKSPACE}/hblock/sources.list"
+          # Clean/empty the count file
+          : > "${COUNT_FILE}"
+          for link in "${SOURCES_LIST_MAP[@]}"; do
+              # Only use links, no commented links or empty lines
+              if [[ "${link}" != \#* && -n "${link}" ]]; then
+                  echo "${link}" >> "${COUNT_FILE}"
+                  curl -fsS --retry 5 "${link}" | wc -l >> "${COUNT_FILE}"
+                  echo >> "${COUNT_FILE}"
+              fi
+          done
+
+      - name: Build Blocklists
+        id: build-blocklists
+        shell: bash
+        run: |
+          set -eou pipefail
+          FILE_SIZE_LIMIT=45M  # Keep files under 50 MB to avoid Git warnings
+          COMPRESSION_LEVEL=19 # Set compression level for zstd archive
+
+          # Hblock helper function
+          hblock() {
+            bash "${HBLOCK}" \
+              -S "${GITHUB_WORKSPACE}/hblock/sources.list" \
+              -A "${GITHUB_WORKSPACE}/hblock/allow.list" \
+              -D "${GITHUB_WORKSPACE}/hblock/deny.list" \
+              -H none -F none \
+              "$@"
+          }
+
+          build_list() {
+            local blocklist_dir="${GITHUB_WORKSPACE}/${1}"; blocklist="${2}"; shift 2
+            local args=("$@") raw_blocklist="${blocklist}"
+
+            mkdir -p "${blocklist_dir}"
+            # Build the blocklist with hblock
+            hblock "${args[@]}" -O "${TMP_DIR}/${raw_blocklist}"
+            # Split blocklist by size limit to avoid Git warnings
+            split -dC "${FILE_SIZE_LIMIT}" \
+                  "${TMP_DIR}/${raw_blocklist}" "${blocklist_dir}/${blocklist}"
+            # Create blocklist archive
+            tar --use-compress-program "zstd --ultra -${COMPRESSION_LEVEL} -T$(nproc)" \
+                -C "${TMP_DIR}" -cf "${blocklist_dir}/${blocklist}.tar.zst" "${raw_blocklist}"
+          }
+
+          # Reset/remove blocklist directories
+          rm -rf "${GITHUB_WORKSPACE}"/{dnsmasq.d,hosts.d,domains.d}
+
+          echo "Build blocklist with DNSmasQ format"
+          build_list "dnsmasq.d" "blocklist.conf" -T "local=/%D/" --filter-subdomains
+
+          echo "Build Hostfile"
+          build_list "hosts.d" "hosts"
+
+          echo "Build Domains only blocklist"
+          build_list "domains.d" "domains" -T "%D"
+
+          echo "Build Domains only blocklist by filtering SubDomains"
+          build_list "domains.d" "domains-filtered-subdomains" -T "%D" --filter-subdomains
+
+          tree
+
+      - name: Push block list to repo
+        id: push-to-repo
+        shell: bash
+        run: |
+          git config --local user.name actions-user
+          git config --local user.email "actions@github.com"
+          git fetch
+          git checkout --orphan latest_branch
+          git add -A
+          git commit -am "$(date "+%a %b %d %H:%M:%S %Y")"
+          git branch -D main
+          git branch -m main
+          git push -f origin main
